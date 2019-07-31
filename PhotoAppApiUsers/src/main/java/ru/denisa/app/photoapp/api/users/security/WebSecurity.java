@@ -46,17 +46,16 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.authorizeRequests().antMatchers("/users/**").hasIpAddress(environment.getProperty("getway.ip"))
-                .and().addFilter(new AuthenticationFilter());
+                .and().addFilter(getAuthenticationFilter());
         http.headers().frameOptions().disable();
 
      }
 
 
 
-
      private AuthenticationFilter getAuthenticationFilter() throws  Exception{
-         AuthenticationFilter authenticationFilter = new AuthenticationFilter();
-         authenticationFilter.setAuthenticationManager(authenticationManager());
+         AuthenticationFilter authenticationFilter = new AuthenticationFilter(usersService,environment,authenticationManager());
+          authenticationFilter.setFilterProcessesUrl(environment.getProperty("login.url.path"));
          return authenticationFilter;
       }
 
